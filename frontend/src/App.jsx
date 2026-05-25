@@ -12,9 +12,9 @@ function App() {
     localStorage.getItem("token") ||
     "";
 
-  // API
+  // DEPLOYED BACKEND API
   const api = axios.create({
-    baseURL: "http://127.0.0.1:8000/api",
+    baseURL: "https://breathe-esg-backend-2.onrender.com/api",
     headers: {
       "Content-Type": "application/json",
       Authorization: token ? `Bearer ${token}` : "",
@@ -34,7 +34,7 @@ function App() {
         setRecords([]);
       }
     } catch (error) {
-      console.error("Error fetching records");
+      console.error("Error fetching records", error);
       setRecords([]);
     }
   };
@@ -45,7 +45,7 @@ function App() {
       const response = await api.get("/dashboard/stats/");
       setStats(response.data);
     } catch (error) {
-      console.error("Error fetching stats");
+      console.error("Error fetching stats", error);
     }
   };
 
@@ -67,7 +67,7 @@ function App() {
       await api.post(`/records/${id}/approve/`);
       await loadData();
     } catch (error) {
-      console.error("Approve failed");
+      console.error("Approve failed", error);
     }
   };
 
@@ -77,7 +77,7 @@ function App() {
       await api.post(`/records/${id}/reject/`);
       await loadData();
     } catch (error) {
-      console.error("Reject failed");
+      console.error("Reject failed", error);
     }
   };
 
@@ -87,7 +87,7 @@ function App() {
       await api.post(`/records/${id}/lock/`);
       await loadData();
     } catch (error) {
-      console.error("Lock failed");
+      console.error("Lock failed", error);
     }
   };
 
