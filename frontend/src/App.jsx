@@ -49,7 +49,7 @@ function App() {
       const token = localStorage.getItem("access");
 
       const statsResponse = await axios.get(
-        "http://127.0.0.1:8000/api/dashboard/stats/",
+        "https://breathe-esg-platform-2.onrender.com",
         {
           headers: {
             Authorization: `Bearer ${token}`,
