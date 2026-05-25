@@ -6,10 +6,14 @@ from audit.models import AuditLog
 
 from .models import NormalizedRecord
 from .serializers import NormalizedRecordSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 # LIST RECORDS
 class NormalizedRecordListView(generics.ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     serializer_class = NormalizedRecordSerializer
 
@@ -27,6 +31,8 @@ class NormalizedRecordListView(generics.ListAPIView):
 
 # APPROVE RECORD
 class ApproveRecordView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, record_id):
 
@@ -60,6 +66,8 @@ class ApproveRecordView(APIView):
 
 # REJECT RECORD
 class RejectRecordView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, record_id):
 
@@ -93,6 +101,9 @@ class RejectRecordView(APIView):
 
 # LOCK RECORD
 class LockRecordView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, record_id):
 
