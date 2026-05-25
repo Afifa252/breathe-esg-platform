@@ -8,13 +8,12 @@ function Login({ onLogin }) {
   const login = async () => {
     try {
       const response = await axios.post(
-        "https://breathe-esg-backend-2.onrender.com/api/token/",
-        {
-          username,
-          password,
-        }
-      );
-
+  "http://127.0.0.1:8000/api/token/",
+  {
+    username,
+    password,
+  }
+);
       localStorage.setItem("access", response.data.access);
       localStorage.setItem("refresh", response.data.refresh);
 
