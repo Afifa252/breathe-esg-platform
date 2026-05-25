@@ -156,3 +156,16 @@ CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
     "https://breathe-esg-platform-gray.vercel.app",
 ]
+ALLOWED_HOSTS = ['*']
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "https://breathe-esg-platform-gray.vercel.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://breathe-esg-platform-gray.vercel.app",
+]
+
+CORS_ALLOW_CREDENTIALS = True
