@@ -1,7 +1,21 @@
-venv/
-node_modules/
-.env
+# Python
 __pycache__/
-dist/
-build/
-*.sqlite3
+*.pyc
+venv/
+
+# Database
+db.sqlite3
+
+# Node
+node_modules/
+frontend/node_modules/
+
+# Vite
+.vite/
+frontend/.vite/
+
+# Env
+.env
+
+# VS Code
+.vscode/

@@ -1,6 +1,6 @@
+from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 
 from audit.models import AuditLog
 
@@ -8,25 +8,24 @@ from .models import NormalizedRecord
 from .serializers import NormalizedRecordSerializer
 
 
-class NormalizedRecordListView(APIView):
+# LIST RECORDS
+class NormalizedRecordListView(generics.ListAPIView):
 
-    def get(self, request):
+    serializer_class = NormalizedRecordSerializer
 
-        suspicious_only = request.GET.get("suspicious")
+    def get_queryset(self):
 
-        records = NormalizedRecord.objects.all()
+        queryset = NormalizedRecord.objects.all().order_by("created_at")
+
+        suspicious_only = self.request.GET.get("suspicious")
 
         if suspicious_only == "true":
-            records = records.filter(suspicious_flag=True)
+            queryset = queryset.filter(suspicious_flag=True)
 
-        serializer = NormalizedRecordSerializer(
-            records,
-            many=True
-        )
-
-        return Response(serializer.data)
+        return queryset
 
 
+# APPROVE RECORD
 class ApproveRecordView(APIView):
 
     def post(self, request, record_id):
@@ -59,6 +58,7 @@ class ApproveRecordView(APIView):
         )
 
 
+# REJECT RECORD
 class RejectRecordView(APIView):
 
     def post(self, request, record_id):
@@ -91,6 +91,7 @@ class RejectRecordView(APIView):
         )
 
 
+# LOCK RECORD
 class LockRecordView(APIView):
 
     def post(self, request, record_id):
