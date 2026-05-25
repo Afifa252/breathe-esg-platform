@@ -1,49 +1,43 @@
 import { useState } from "react";
 import axios from "axios";
 
-function Login({ onLogin }) {
+function Login({ setIsAuthenticated }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const login = async () => {
+  const handleLogin = async () => {
     try {
       const response = await axios.post(
-  "https://breathe-esg-platform-2.onrender.com",
-  {
-    username,
-    password,
-  }
-);
-      localStorage.setItem("access", response.data.access);
-      localStorage.setItem("refresh", response.data.refresh);
+        "https://breathe-esg-platform-2.onrender.com/api/token/",
+        {
+          username,
+          password,
+        }
+      );
 
-      onLogin();
+      localStorage.setItem(
+        "access",
+        response.data.access
+      );
+
+      localStorage.setItem(
+        "refresh",
+        response.data.refresh
+      );
+
+      setIsAuthenticated(true);
+
     } catch (error) {
+      console.log(error);
+
       alert("Invalid credentials");
     }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#f1f5f9",
-      }}
-    >
-      <div
-        style={{
-          background: "white",
-          padding: "40px",
-          borderRadius: "16px",
-          width: "350px",
-        }}
-      >
-        <h1 style={{ marginBottom: "20px" }}>
-          ESG Login
-        </h1>
+    <div className="login-page">
+      <div className="login-card">
+        <h1>ESG Login</h1>
 
         <input
           type="text"
@@ -52,7 +46,6 @@ function Login({ onLogin }) {
           onChange={(e) =>
             setUsername(e.target.value)
           }
-          style={inputStyle}
         />
 
         <input
@@ -62,36 +55,14 @@ function Login({ onLogin }) {
           onChange={(e) =>
             setPassword(e.target.value)
           }
-          style={inputStyle}
         />
 
-        <button
-          onClick={login}
-          style={buttonStyle}
-        >
+        <button onClick={handleLogin}>
           Login
         </button>
       </div>
     </div>
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  padding: "12px",
-  marginBottom: "16px",
-  borderRadius: "8px",
-  border: "1px solid #ccc",
-};
-
-const buttonStyle = {
-  width: "100%",
-  padding: "12px",
-  background: "#0f172a",
-  color: "white",
-  border: "none",
-  borderRadius: "8px",
-  fontWeight: "bold",
-};
 
 export default Login;
