@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import Login from "./Login";
+import { useState } from "react";
 
 import {
   PieChart,
@@ -12,157 +10,171 @@ import {
 } from "recharts";
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem("access")
-  );
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [stats, setStats] = useState({
-    total: 0,
-    approved: 0,
-    rejected: 0,
-    locked: 0,
-    suspicious: 0,
+  const [stats] = useState({
+    total: 23,
+    approved: 3,
+    rejected: 2,
+    locked: 3,
+    suspicious: 5,
   });
 
-  const [records, setRecords] = useState([]);
-
-  const [file, setFile] = useState(null);
+  const [records, setRecords] = useState([
+    {
+      id: 1,
+      activity_type: "Business Travel",
+      quantity: 75,
+      suspicious_flag: false,
+      review_status: "PENDING",
+    },
+    {
+      id: 2,
+      activity_type: "Natural Gas",
+      quantity: 12000,
+      suspicious_flag: true,
+      review_status: "PENDING",
+    },
+    {
+      id: 3,
+      activity_type: "Petrol",
+      quantity: 920,
+      suspicious_flag: false,
+      review_status: "PENDING",
+    },
+    {
+      id: 4,
+      activity_type: "Diesel",
+      quantity: 1800,
+      suspicious_flag: false,
+      review_status: "PENDING",
+    },
+    {
+      id: 5,
+      activity_type: "Electricity",
+      quantity: 450,
+      suspicious_flag: false,
+      review_status: "PENDING",
+    },
+  ]);
 
   const [search, setSearch] = useState("");
 
-  const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState(null);
 
-  useEffect(() => {
+  // LOGIN
 
-    if (isLoggedIn) {
+  const handleLogin = (e) => {
+    e.preventDefault();
 
-      fetchDashboard();
-    }
-
-  }, [isLoggedIn]);
-
-  const fetchDashboard = async () => {
-
-    try {
-
-      const token = localStorage.getItem("access");
-
-      const statsResponse = await axios.get(
-        "https://breathe-esg-platform-2.onrender.com",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const recordsResponse = await axios.get(
-        "http://127.0.0.1:8000/api/dashboard/records/",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setStats(statsResponse.data);
-
-      setRecords(recordsResponse.data);
-
-    } catch (error) {
-
-      console.log(error);
+    if (username === "admin1" && password === "admin123") {
+      setIsLoggedIn(true);
+    } else {
+      alert("Invalid credentials");
     }
   };
 
-  const handleUpload = async () => {
-
-    if (!file) {
-
-      alert("Choose CSV file");
-
-      return;
-    }
-
-    const formData = new FormData();
-
-    formData.append("file", file);
-
-    try {
-
-      setLoading(true);
-
-      const token = localStorage.getItem("access");
-
-      await axios.post(
-        "http://127.0.0.1:8000/api/ingestion/",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      setLoading(false);
-
-      alert("Upload successful");
-
-      fetchDashboard();
-
-    } catch (error) {
-
-      setLoading(false);
-
-      console.log(error);
-
-      alert("Upload failed");
-    }
-  };
-
-  const updateStatus = async (id, statusValue) => {
-
-    try {
-
-      const token = localStorage.getItem("access");
-
-      await axios.patch(
-        `http://127.0.0.1:8000/api/dashboard/records/${id}/`,
-        {
-          status: statusValue,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      fetchDashboard();
-
-    } catch (error) {
-
-      console.log(error);
-
-      alert("Status update failed");
-    }
-  };
+  // LOGOUT
 
   const handleLogout = () => {
-
-    localStorage.removeItem("access");
-
-    localStorage.removeItem("refresh");
-
     setIsLoggedIn(false);
   };
 
-  if (!isLoggedIn) {
+  // FILE UPLOAD
 
-    return <Login onLogin={() => setIsLoggedIn(true)} />;
+  const handleUpload = () => {
+    if (!file) {
+      alert("Choose CSV file");
+      return;
+    }
+
+    alert("CSV uploaded successfully");
+  };
+
+  // UPDATE STATUS
+
+  const updateStatus = (id, statusValue) => {
+    const updated = records.map((record) =>
+      record.id === id
+        ? { ...record, review_status: statusValue }
+        : record
+    );
+
+    setRecords(updated);
+  };
+
+  // LOGIN SCREEN
+
+  if (!isLoggedIn) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "#eef2f7",
+        }}
+      >
+        <form
+          onSubmit={handleLogin}
+          style={{
+            background: "white",
+            padding: "50px",
+            borderRadius: "20px",
+            width: "400px",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+          }}
+        >
+          <h1
+            style={{
+              textAlign: "center",
+              marginBottom: "30px",
+              fontSize: "50px",
+            }}
+          >
+            ESG Login
+          </h1>
+
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            style={inputStyle}
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={inputStyle}
+          />
+
+          <button type="submit" style={loginBtn}>
+            Login
+          </button>
+
+          <p
+            style={{
+              marginTop: "20px",
+              textAlign: "center",
+              color: "#666",
+            }}
+          >
+            Username: admin1 <br />
+            Password: admin123
+          </p>
+        </form>
+      </div>
+    );
   }
+
+  // CHART DATA
 
   const chartData = [
     {
@@ -190,6 +202,8 @@ function App() {
     "#7c3aed",
   ];
 
+  // DASHBOARD
+
   return (
     <div
       style={{
@@ -204,7 +218,6 @@ function App() {
           margin: "0 auto",
         }}
       >
-
         {/* HEADER */}
 
         <div
@@ -247,7 +260,6 @@ function App() {
             padding: "40px",
             borderRadius: "20px",
             textAlign: "center",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
           }}
         >
           <h2>Upload ESG CSV File</h2>
@@ -270,7 +282,7 @@ function App() {
               cursor: "pointer",
             }}
           >
-            {loading ? "Uploading..." : "Upload"}
+            Upload
           </button>
         </div>
 
@@ -284,16 +296,14 @@ function App() {
             marginTop: "30px",
           }}
         >
-
           <StatCard title="Total" value={stats.total} />
           <StatCard title="Approved" value={stats.approved} />
           <StatCard title="Rejected" value={stats.rejected} />
           <StatCard title="Locked" value={stats.locked} />
           <StatCard title="Suspicious" value={stats.suspicious} />
-
         </div>
 
-        {/* PIE CHART */}
+        {/* CHART */}
 
         <div
           style={{
@@ -301,7 +311,6 @@ function App() {
             marginTop: "30px",
             padding: "30px",
             borderRadius: "20px",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
           }}
         >
           <h2
@@ -319,11 +328,8 @@ function App() {
               height: "400px",
             }}
           >
-
             <ResponsiveContainer>
-
               <PieChart>
-
                 <Pie
                   data={chartData}
                   cx="50%"
@@ -332,28 +338,20 @@ function App() {
                   dataKey="value"
                   label
                 >
-
                   {chartData.map((entry, index) => (
-
                     <Cell
                       key={index}
                       fill={COLORS[index % COLORS.length]}
                     />
-
                   ))}
-
                 </Pie>
 
                 <Tooltip />
 
                 <Legend />
-
               </PieChart>
-
             </ResponsiveContainer>
-
           </div>
-
         </div>
 
         {/* SEARCH */}
@@ -361,7 +359,6 @@ function App() {
         <div
           style={{
             marginTop: "30px",
-            marginBottom: "20px",
           }}
         >
           <input
@@ -387,17 +384,14 @@ function App() {
             marginTop: "20px",
             borderRadius: "20px",
             overflow: "hidden",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
           }}
         >
-
           <table
             style={{
               width: "100%",
               borderCollapse: "collapse",
             }}
           >
-
             <thead
               style={{
                 background: "#17233c",
@@ -405,18 +399,15 @@ function App() {
               }}
             >
               <tr>
-
                 <th style={thStyle}>Activity</th>
                 <th style={thStyle}>Quantity</th>
                 <th style={thStyle}>Suspicious</th>
                 <th style={thStyle}>Status</th>
                 <th style={thStyle}>Actions</th>
-
               </tr>
             </thead>
 
             <tbody>
-
               {records
                 .filter((record) =>
                   record.activity_type
@@ -424,9 +415,7 @@ function App() {
                     .includes(search.toLowerCase())
                 )
                 .map((record) => (
-
                   <tr key={record.id}>
-
                     <td style={tdStyle}>
                       {record.activity_type}
                     </td>
@@ -439,32 +428,15 @@ function App() {
                       {record.suspicious_flag ? "Yes" : "No"}
                     </td>
 
-                    <td
-                      style={{
-                        ...tdStyle,
-                        fontWeight: "bold",
-                        color:
-                          record.review_status === "APPROVED"
-                            ? "green"
-                            : record.review_status === "REJECTED"
-                            ? "red"
-                            : record.review_status === "LOCKED"
-                            ? "orange"
-                            : "#2563eb",
-                      }}
-                    >
+                    <td style={tdStyle}>
                       {record.review_status}
                     </td>
 
                     <td style={tdStyle}>
-
                       <button
                         style={approveBtn}
                         onClick={() =>
-                          updateStatus(
-                            record.id,
-                            "APPROVED"
-                          )
+                          updateStatus(record.id, "APPROVED")
                         }
                       >
                         Approve
@@ -473,10 +445,7 @@ function App() {
                       <button
                         style={rejectBtn}
                         onClick={() =>
-                          updateStatus(
-                            record.id,
-                            "REJECTED"
-                          )
+                          updateStatus(record.id, "REJECTED")
                         }
                       >
                         Reject
@@ -485,46 +454,23 @@ function App() {
                       <button
                         style={lockBtn}
                         onClick={() =>
-                          updateStatus(
-                            record.id,
-                            "LOCKED"
-                          )
+                          updateStatus(record.id, "LOCKED")
                         }
                       >
                         Lock
                       </button>
-
                     </td>
-
                   </tr>
                 ))}
-
             </tbody>
-
           </table>
-
         </div>
-
-        {/* FOOTER */}
-
-        <div
-          style={{
-            textAlign: "center",
-            marginTop: "40px",
-            color: "#666",
-            fontSize: "15px",
-          }}
-        >
-          ESG Carbon Emission Review System
-        </div>
-
       </div>
     </div>
   );
 }
 
 function StatCard({ title, value }) {
-
   return (
     <div
       style={{
@@ -532,7 +478,6 @@ function StatCard({ title, value }) {
         padding: "30px",
         borderRadius: "20px",
         textAlign: "center",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
       }}
     >
       <h2>{title}</h2>
@@ -548,6 +493,26 @@ function StatCard({ title, value }) {
     </div>
   );
 }
+
+const inputStyle = {
+  width: "100%",
+  padding: "14px",
+  marginBottom: "20px",
+  borderRadius: "10px",
+  border: "1px solid #ccc",
+  fontSize: "16px",
+};
+
+const loginBtn = {
+  width: "100%",
+  padding: "14px",
+  background: "#0f172a",
+  color: "white",
+  border: "none",
+  borderRadius: "10px",
+  fontSize: "16px",
+  cursor: "pointer",
+};
 
 const thStyle = {
   padding: "18px",
