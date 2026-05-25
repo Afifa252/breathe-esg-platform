@@ -9,4 +9,6 @@ urlpatterns = [
         SAPUploadView.as_view(),
         name="sap-upload"
     ),
+    path("upload/", UploadCSVView.as_view()),
+
 ]

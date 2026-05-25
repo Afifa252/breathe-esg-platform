@@ -17,6 +17,7 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/ingestion/", include("ingestion.urls")),
 
     # RECORDS
     path("api/records/", NormalizedRecordListView.as_view()),
