@@ -28,10 +28,11 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "breathe-esg-backend-1-29u6.onrender.com",
+    ".onrender.com",
 ]
+
 CSRF_TRUSTED_ORIGINS = [
-    "https://breathe-esg-backend-1-29u6.onrender.com",
+    "https://*.onrender.com",
 ]
 
 # Application definition
