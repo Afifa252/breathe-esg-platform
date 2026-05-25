@@ -151,3 +151,8 @@ TEMPLATES[0]['DIRS'] = [
 ]
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://breathe-esg-platform-gray.vercel.app",
+]
