@@ -24,7 +24,7 @@ urlpatterns = [
     path("api/records/<uuid:record_id>/reject/", RejectRecordView.as_view()),
     path("api/records/<uuid:record_id>/lock/", LockRecordView.as_view()),
 
-    # DASHBOARD
+    # DASHBOARD STATS
     path("api/dashboard/stats/", DashboardStatsView.as_view()),
 
     # JWT
