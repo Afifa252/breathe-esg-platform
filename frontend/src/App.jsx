@@ -158,17 +158,6 @@ function App() {
           <button type="submit" style={loginBtn}>
             Login
           </button>
-
-          <p
-            style={{
-              marginTop: "20px",
-              textAlign: "center",
-              color: "#666",
-            }}
-          >
-            Username: admin1 <br />
-            Password: admin123
-          </p>
         </form>
       </div>
     );
